@@ -1,8 +1,8 @@
 package com.oyku.SpringStarter.service;
 
+import com.oyku.SpringStarter.DTO.RequestDTO.StudentProfileRequestDTO;
 import com.oyku.SpringStarter.model.StudentProfile;
 import com.oyku.SpringStarter.repository.StudentProfileRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +13,6 @@ public class StudentProfileService {
 
     private final StudentProfileRepository studentProfileRepository;
 
-    @Autowired
     public StudentProfileService(StudentProfileRepository studentProfileRepository) {
         this.studentProfileRepository = studentProfileRepository;
     }
@@ -26,15 +25,26 @@ public class StudentProfileService {
         return studentProfileRepository.findById(id);
     }
 
-    public StudentProfile addNewStudentProfile(StudentProfile studentProfile) {
-        return studentProfileRepository.save(studentProfile);
+    public StudentProfile addNewStudentProfile(StudentProfileRequestDTO dto) {
+        StudentProfile profile = new StudentProfile();
+        profile.setAddress(dto.getAddress());
+        profile.setPhone(dto.getPhone());
+        return studentProfileRepository.save(profile);
     }
 
-    public void deleteStudentProfileById(int id) {
+    public Optional<StudentProfile> updateStudentProfileById(int id, StudentProfileRequestDTO dto) {
+        Optional<StudentProfile> optional = studentProfileRepository.findById(id);
+        if(optional.isEmpty()) return Optional.empty();
+
+        StudentProfile profile = optional.get();
+        profile.setAddress(dto.getAddress());
+        profile.setPhone(dto.getPhone());
+        return Optional.of(studentProfileRepository.save(profile));
+    }
+
+    public boolean deleteStudentProfileById(int id) {
+        if(!studentProfileRepository.existsById(id)) return false;
         studentProfileRepository.deleteById(id);
-    }
-
-    public StudentProfile updateStudentProfileById(StudentProfile studentProfile) {
-        return studentProfileRepository.save(studentProfile);
+        return true;
     }
 }

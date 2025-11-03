@@ -1,15 +1,13 @@
-package com.oyku.SpringStarter.DTO;
+package com.oyku.SpringStarter.DTO.RequestDTO;
 
 import java.util.List;
 
-public class StudentDTO {
+public class StudentRequestDTO {
     private String name;
-    private String department;
+    private int departmentId;
     private int profileId;
     private List<Integer> bookIds;
     private List<Integer> courseIds;
-
-    // getters & setters
 
     public String getName() {
         return name;
@@ -19,12 +17,12 @@ public class StudentDTO {
         this.name = name;
     }
 
-    public String getDepartment() {
-        return department;
+    public int getDepartmentId() {
+        return departmentId;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
+    public void setDepartmentId(int departmentId) {
+        this.departmentId = departmentId;
     }
 
     public int getProfileId() {
