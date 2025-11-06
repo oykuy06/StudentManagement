@@ -1,10 +1,18 @@
 package com.oyku.SpringStarter.DTO.RequestDTO;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.util.List;
 
 public class CourseRequestDTO {
+    @NotBlank(message = "Course name cannot be blank")
     private String name;
+    @NotNull(message = "Teacher ID is required")
+    @Positive(message = "Teacher ID must be positive")
     private Integer teacherId;
+    @NotNull(message = "Student ID is required")
+    @Positive(message = "Student ID must be positive")
     private List<Integer> studentIds;
 
     public String getName() {

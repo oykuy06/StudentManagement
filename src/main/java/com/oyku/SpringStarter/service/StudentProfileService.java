@@ -3,6 +3,7 @@ package com.oyku.SpringStarter.service;
 import com.oyku.SpringStarter.DTO.RequestDTO.StudentProfileRequestDTO;
 import com.oyku.SpringStarter.model.StudentProfile;
 import com.oyku.SpringStarter.repository.StudentProfileRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +22,9 @@ public class StudentProfileService {
         return studentProfileRepository.findAll();
     }
 
-    public Optional<StudentProfile> getStudentProfileById(int id) {
-        return studentProfileRepository.findById(id);
+    public StudentProfile getStudentProfileById(int id) {
+        return studentProfileRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Profile not found with ID: " + id));
     }
 
     public StudentProfile addNewStudentProfile(StudentProfileRequestDTO dto) {
@@ -32,19 +34,20 @@ public class StudentProfileService {
         return studentProfileRepository.save(profile);
     }
 
-    public Optional<StudentProfile> updateStudentProfileById(int id, StudentProfileRequestDTO dto) {
-        Optional<StudentProfile> optional = studentProfileRepository.findById(id);
-        if(optional.isEmpty()) return Optional.empty();
+    public StudentProfile updateStudentProfileById(int id, StudentProfileRequestDTO dto) {
+        StudentProfile profile = studentProfileRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Profile not found with ID: " + id));
 
-        StudentProfile profile = optional.get();
         profile.setAddress(dto.getAddress());
         profile.setPhone(dto.getPhone());
-        return Optional.of(studentProfileRepository.save(profile));
+        return studentProfileRepository.save(profile);
     }
 
-    public boolean deleteStudentProfileById(int id) {
-        if(!studentProfileRepository.existsById(id)) return false;
+    public void deleteStudentProfileById(int id) {
+        if (!studentProfileRepository.existsById(id)) {
+            throw new EntityNotFoundException("Profile not found with ID: " + id);
+        }
         studentProfileRepository.deleteById(id);
-        return true;
     }
+
 }

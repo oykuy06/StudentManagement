@@ -7,6 +7,7 @@ import com.oyku.SpringStarter.model.Teacher;
 import com.oyku.SpringStarter.repository.CourseRepository;
 import com.oyku.SpringStarter.repository.DepartmentRepository;
 import com.oyku.SpringStarter.repository.TeacherRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,8 +33,9 @@ public class TeacherService {
         return teacherRepository.findAll();
     }
 
-    public Optional<Teacher> getTeacherById(int id) {
-        return teacherRepository.findById(id);
+    public Teacher getTeacherById(int id) {
+        return teacherRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Teacher not found with ID: " + id));
     }
 
     public Teacher addNewTeacher(TeacherRequestDTO dto) {
@@ -41,49 +43,48 @@ public class TeacherService {
         teacher.setName(dto.getName());
         teacher.setTitle(dto.getTitle());
 
-        // Department
         Department department = departmentRepository.findById(dto.getDepartmentId())
-                .orElse(null);
+                .orElseThrow(() -> new EntityNotFoundException("Department not found with ID: " + dto.getDepartmentId()));
         teacher.setDepartment(department);
 
-        // Courses
-        if(dto.getCourseIds() != null){
-            List<Course> courses = new ArrayList<>();
-            for(int courseId : dto.getCourseIds()){
-                courseRepository.findById(courseId).ifPresent(courses::add);
-            }
+        if (dto.getCourseIds() != null) {
+            List<Course> courses = dto.getCourseIds().stream()
+                    .map(courseId -> courseRepository.findById(courseId)
+                            .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId)))
+                    .toList();
             teacher.setCourses(courses);
         }
 
         return teacherRepository.save(teacher);
     }
 
-    public Optional<Teacher> updateTeacher(int id, TeacherRequestDTO dto) {
-        Optional<Teacher> optional = teacherRepository.findById(id);
-        if(optional.isEmpty()) return Optional.empty();
+    public Teacher updateTeacher(int id, TeacherRequestDTO dto) {
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Teacher not found with ID: " + id));
 
-        Teacher teacher = optional.get();
         teacher.setName(dto.getName());
         teacher.setTitle(dto.getTitle());
 
         Department department = departmentRepository.findById(dto.getDepartmentId())
-                .orElse(null);
+                .orElseThrow(() -> new EntityNotFoundException("Department not found with ID: " + dto.getDepartmentId()));
         teacher.setDepartment(department);
 
-        if(dto.getCourseIds() != null){
-            List<Course> courses = new ArrayList<>();
-            for(int courseId : dto.getCourseIds()){
-                courseRepository.findById(courseId).ifPresent(courses::add);
-            }
+        if (dto.getCourseIds() != null) {
+            List<Course> courses = dto.getCourseIds().stream()
+                    .map(courseId -> courseRepository.findById(courseId)
+                            .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId)))
+                    .toList();
             teacher.setCourses(courses);
         }
 
-        return Optional.of(teacherRepository.save(teacher));
+        return teacherRepository.save(teacher);
     }
 
-    public boolean deleteTeacherById(int id){
-        if(!teacherRepository.existsById(id)) return false;
+    public void deleteTeacherById(int id) {
+        if (!teacherRepository.existsById(id)) {
+            throw new EntityNotFoundException("Teacher not found with ID: " + id);
+        }
         teacherRepository.deleteById(id);
-        return true;
     }
+
 }

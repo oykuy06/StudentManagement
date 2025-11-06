@@ -6,6 +6,7 @@ import com.oyku.SpringStarter.model.Course;
 import com.oyku.SpringStarter.repository.GradeRepository;
 import com.oyku.SpringStarter.repository.StudentRepository;
 import com.oyku.SpringStarter.repository.CourseRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,45 +31,46 @@ public class GradeService {
         return gradeRepository.findAll();
     }
 
-    public Optional<Grade> getGradeById(int id) {
-        return gradeRepository.findById(id);
+    public Grade getGradeById(int id) {
+        return gradeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Grade not found with ID: " + id));
     }
 
-    public Optional<Grade> createGrade(double score, int studentId, int courseId) {
-        Optional<Student> studentOpt = studentRepository.findById(studentId);
-        Optional<Course> courseOpt = courseRepository.findById(courseId);
-
-        if(studentOpt.isEmpty() || courseOpt.isEmpty()) return Optional.empty();
+    public Grade createGrade(double score, int studentId, int courseId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
 
         Grade grade = new Grade();
         grade.setScore(score);
-        grade.setStudent(studentOpt.get());
-        grade.setCourse(courseOpt.get());
+        grade.setStudent(student);
+        grade.setCourse(course);
 
-        return Optional.of(gradeRepository.save(grade));
+        return gradeRepository.save(grade);
     }
 
-    public Optional<Grade> updateGrade(int id, double score, int studentId, int courseId) {
-        Optional<Grade> gradeOpt = gradeRepository.findById(id);
-        if (gradeOpt.isEmpty()) return Optional.empty();
+    public Grade updateGrade(int id, double score, int studentId, int courseId) {
+        Grade grade = gradeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Grade not found with ID: " + id));
 
-        Grade grade = gradeOpt.get();
-
-        Optional<Student> studentOpt = studentRepository.findById(studentId);
-        Optional<Course> courseOpt = courseRepository.findById(courseId);
-
-        if(studentOpt.isEmpty() || courseOpt.isEmpty()) return Optional.empty();
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
 
         grade.setScore(score);
-        grade.setStudent(studentOpt.get());
-        grade.setCourse(courseOpt.get());
+        grade.setStudent(student);
+        grade.setCourse(course);
 
-        return Optional.of(gradeRepository.save(grade));
+        return gradeRepository.save(grade);
     }
 
-    public boolean deleteGrade(int id) {
-        if(!gradeRepository.existsById(id)) return false;
+    public void deleteGrade(int id) {
+        if (!gradeRepository.existsById(id)) {
+            throw new EntityNotFoundException("Grade not found with ID: " + id);
+        }
         gradeRepository.deleteById(id);
-        return true;
     }
+
 }

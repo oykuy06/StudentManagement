@@ -3,6 +3,7 @@ package com.oyku.SpringStarter.service;
 import com.oyku.SpringStarter.DTO.RequestDTO.DepartmentRequestDTO;
 import com.oyku.SpringStarter.model.Department;
 import com.oyku.SpringStarter.repository.DepartmentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +22,9 @@ public class DepartmentService {
         return departmentRepository.findAll();
     }
 
-    public Optional<Department> getDepartmentById(int id) {
-        return departmentRepository.findById(id);
+    public Department getDepartmentById(int id) {
+        return departmentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Department not found with ID: " + id));
     }
 
     public Department createDepartment(DepartmentRequestDTO dto) {
@@ -31,19 +33,19 @@ public class DepartmentService {
         return departmentRepository.save(department);
     }
 
-    public Optional<Department> updateDepartment(int id, DepartmentRequestDTO dto) {
-        Optional<Department> optional = departmentRepository.findById(id);
-        if (optional.isEmpty()) return Optional.empty();
+    public Department updateDepartment(int id, DepartmentRequestDTO dto) {
+        Department department = departmentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Department not found with ID: " + id));
 
-        Department department = optional.get();
         department.setName(dto.getName());
-        departmentRepository.save(department);
-        return Optional.of(department);
+        return departmentRepository.save(department);
     }
 
-    public boolean deleteDepartment(int id) {
-        if (!departmentRepository.existsById(id)) return false;
+    public void deleteDepartment(int id) {
+        if (!departmentRepository.existsById(id)) {
+            throw new EntityNotFoundException("Department not found with ID: " + id);
+        }
         departmentRepository.deleteById(id);
-        return true;
     }
+
 }

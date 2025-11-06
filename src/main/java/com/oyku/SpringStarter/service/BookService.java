@@ -7,6 +7,7 @@ import com.oyku.SpringStarter.model.Library;
 import com.oyku.SpringStarter.repository.BookRepository;
 import com.oyku.SpringStarter.repository.StudentRepository;
 import com.oyku.SpringStarter.repository.LibraryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,55 +32,48 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public Optional<Book> getBookById(int id) {
-        return bookRepository.findById(id);
+    public Book getBookById(int id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + id));
     }
 
     public Book createBook(BookRequestDTO dto) {
         Book book = new Book();
         book.setTitle(dto.getTitle());
 
-        if (dto.getStudentId() != 0) {
-            studentRepository.findById(dto.getStudentId())
-                    .ifPresent(book::setStudent);
-        }
+        Student student = studentRepository.findById(dto.getStudentId())
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + dto.getStudentId()));
+        Library library = libraryRepository.findById(dto.getLibraryId())
+                .orElseThrow(() -> new EntityNotFoundException("Library not found with ID: " + dto.getLibraryId()));
 
-        if (dto.getLibraryId() != 0) {
-            libraryRepository.findById(dto.getLibraryId())
-                    .ifPresent(book::setLibrary);
-        }
+        book.setStudent(student);
+        book.setLibrary(library);
 
         return bookRepository.save(book);
     }
 
-    public Optional<Book> updateBook(int id, BookRequestDTO dto) {
-        Optional<Book> optional = bookRepository.findById(id);
-        if (optional.isEmpty()) return Optional.empty();
+    public Book updateBook(int id, BookRequestDTO dto) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + id));
 
-        Book book = optional.get();
         book.setTitle(dto.getTitle());
 
-        if (dto.getStudentId() != 0) {
-            studentRepository.findById(dto.getStudentId())
-                    .ifPresent(book::setStudent);
-        } else {
-            book.setStudent(null);
-        }
+        Student student = studentRepository.findById(dto.getStudentId())
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + dto.getStudentId()));
+        Library library = libraryRepository.findById(dto.getLibraryId())
+                .orElseThrow(() -> new EntityNotFoundException("Library not found with ID: " + dto.getLibraryId()));
 
-        if (dto.getLibraryId() != 0) {
-            libraryRepository.findById(dto.getLibraryId())
-                    .ifPresent(book::setLibrary);
-        } else {
-            book.setLibrary(null);
-        }
+        book.setStudent(student);
+        book.setLibrary(library);
 
-        bookRepository.save(book);
-        return Optional.of(book);
+        return bookRepository.save(book);
     }
 
-    public boolean deleteBook(int id) {
-        if (!bookRepository.existsById(id)) return false;
+    public void deleteBook(int id) {
+        if (!bookRepository.existsById(id)) {
+            throw new EntityNotFoundException("Book not found with ID: " + id);
+        }
         bookRepository.deleteById(id);
-        return true;
     }
+
 }

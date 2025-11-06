@@ -1,6 +1,9 @@
 package com.oyku.SpringStarter.DTO.RequestDTO;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class LibraryRequestDTO {
+    @NotBlank(message = "Library name cannot be blank")
     private String name;
     private String location;
 

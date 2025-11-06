@@ -3,14 +3,12 @@ package com.oyku.SpringStarter.controller;
 import com.oyku.SpringStarter.DTO.RequestDTO.DepartmentRequestDTO;
 import com.oyku.SpringStarter.DTO.ResponseDTO.*;
 import com.oyku.SpringStarter.model.Department;
-import com.oyku.SpringStarter.model.Student;
-import com.oyku.SpringStarter.model.Teacher;
+import com.oyku.SpringStarter.response.ApiResponse;
 import com.oyku.SpringStarter.service.DepartmentService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,42 +22,40 @@ public class DepartmentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DepartmentResponseDTO>> getAllDepartments() {
+    public ResponseEntity<ApiResponse<List<DepartmentResponseDTO>>> getAllDepartments() {
         List<DepartmentResponseDTO> response = departmentService.getAllDepartments().stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new ApiResponse<>(true, "Departments fetched successfully", response)
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DepartmentResponseDTO> getDepartmentById(@PathVariable int id) {
-        Optional<Department> optional = departmentService.getDepartmentById(id);
-        return optional.map(dep -> ResponseEntity.ok(convertToResponseDTO(dep)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<ApiResponse<DepartmentResponseDTO>> getDepartmentById(@PathVariable int id) {
+        Department department = departmentService.getDepartmentById(id);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Department found successfully", convertToResponseDTO(department)));
     }
 
     @PostMapping
-    public ResponseEntity<DepartmentResponseDTO> createDepartment(@RequestBody DepartmentRequestDTO dto) {
+    public ResponseEntity<ApiResponse<DepartmentResponseDTO>> createDepartment(@Valid @RequestBody DepartmentRequestDTO dto) {
         Department saved = departmentService.createDepartment(dto);
-        return ResponseEntity.status(201).body(convertToResponseDTO(saved));
+        return ResponseEntity.status(201).body(new ApiResponse<>(true, "Department created successfully", convertToResponseDTO(saved)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DepartmentResponseDTO> updateDepartment(@PathVariable int id,
-                                                                  @RequestBody DepartmentRequestDTO dto) {
-        Optional<Department> optional = departmentService.updateDepartment(id, dto);
-        return optional.map(dep -> ResponseEntity.ok(convertToResponseDTO(dep)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<ApiResponse<DepartmentResponseDTO>> updateDepartment(@PathVariable int id,
+                                                                               @Valid @RequestBody DepartmentRequestDTO dto) {
+        Department updated = departmentService.updateDepartment(id, dto);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Department updated successfully", convertToResponseDTO(updated)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDepartment(@PathVariable int id) {
-        return departmentService.deleteDepartment(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+    public ResponseEntity<ApiResponse<Void>> deleteDepartment(@PathVariable int id) {
+        departmentService.deleteDepartment(id);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Department deleted successfully", null));
     }
 
-    // Helper
     private DepartmentResponseDTO convertToResponseDTO(Department dep) {
         DepartmentResponseDTO dto = new DepartmentResponseDTO();
         dto.setId(dep.getId());
@@ -72,7 +68,6 @@ public class DepartmentController {
                 sDto.setId(s.getId());
                 sDto.setName(s.getName() != null ? s.getName() : "");
 
-                // Department reference minimal
                 DepartmentResponseDTO depDto = new DepartmentResponseDTO();
                 depDto.setId(dep.getId());
                 depDto.setName(dep.getName() != null ? dep.getName() : "");
@@ -80,7 +75,6 @@ public class DepartmentController {
                 depDto.setTeachers(List.of());
                 sDto.setDepartment(depDto);
 
-                // Profile
                 if (s.getProfile() != null) {
                     StudentProfileResponseDTO pDto = new StudentProfileResponseDTO();
                     pDto.setId(s.getProfile().getId());
@@ -96,35 +90,22 @@ public class DepartmentController {
                         bDto.setId(b.getId());
                         bDto.setTitle(b.getTitle() != null ? b.getTitle() : "");
 
-                        // ÖNEMLİ: Student bilgisini DOLU set et
+                        // Student
                         StudentResponseDTO bStudent = new StudentResponseDTO();
                         bStudent.setId(s.getId());
                         bStudent.setName(s.getName() != null ? s.getName() : "");
-
-                        // Department'ı da ekle
-                        if (s.getDepartment() != null) {
-                            DepartmentResponseDTO bDep = new DepartmentResponseDTO();
-                            bDep.setId(s.getDepartment().getId());
-                            bDep.setName(s.getDepartment().getName() != null ? s.getDepartment().getName() : "");
-                            bDep.setStudents(List.of());
-                            bDep.setTeachers(List.of());
-                            bStudent.setDepartment(bDep);
-                        }
-
-                        // Profile'ı da ekle
+                        bStudent.setDepartment(depDto);
                         if (s.getProfile() != null) {
                             StudentProfileResponseDTO bProfile = new StudentProfileResponseDTO();
                             bProfile.setId(s.getProfile().getId());
-                            bProfile.setAddress(s.getProfile().getAddress() != null ? s.getProfile().getAddress() : "");
-                            bProfile.setPhone(s.getProfile().getPhone() != null ? s.getProfile().getPhone() : "");
+                            bProfile.setAddress(s.getProfile().getAddress());
+                            bProfile.setPhone(s.getProfile().getPhone());
                             bStudent.setProfile(bProfile);
                         }
-
                         bStudent.setBooks(List.of());
                         bStudent.setCourses(List.of());
                         bDto.setStudent(bStudent);
 
-                        // ÖNEMLİ: Library bilgisini set et
                         if (b.getLibrary() != null) {
                             LibraryResponseDTO libDto = new LibraryResponseDTO();
                             libDto.setId(b.getLibrary().getId());
@@ -147,14 +128,11 @@ public class DepartmentController {
                         cDto.setId(c.getId());
                         cDto.setName(c.getName() != null ? c.getName() : "");
 
-                        // ÖNEMLİ: Teacher bilgisini set et
                         if (c.getTeacher() != null) {
                             TeacherResponseDTO tDto = new TeacherResponseDTO();
                             tDto.setId(c.getTeacher().getId());
                             tDto.setName(c.getTeacher().getName() != null ? c.getTeacher().getName() : "");
                             tDto.setTitle(c.getTeacher().getTitle() != null ? c.getTeacher().getTitle() : "");
-
-                            // Teacher'ın department'ını da set et
                             if (c.getTeacher().getDepartment() != null) {
                                 DepartmentResponseDTO tdDto = new DepartmentResponseDTO();
                                 tdDto.setId(c.getTeacher().getDepartment().getId());
@@ -163,7 +141,6 @@ public class DepartmentController {
                                 tdDto.setTeachers(List.of());
                                 tDto.setDepartment(tdDto);
                             }
-
                             tDto.setCourses(List.of());
                             cDto.setTeacher(tDto);
                         }
@@ -203,13 +180,11 @@ public class DepartmentController {
                         cDto.setId(c.getId());
                         cDto.setName(c.getName() != null ? c.getName() : "");
 
-                        // ÖNEMLİ: Teacher bilgisini DOLU set et
                         TeacherResponseDTO cTeacher = new TeacherResponseDTO();
                         cTeacher.setId(t.getId());
                         cTeacher.setName(t.getName() != null ? t.getName() : "");
                         cTeacher.setTitle(t.getTitle() != null ? t.getTitle() : "");
 
-                        // Department'ı da ekle
                         if (t.getDepartment() != null) {
                             DepartmentResponseDTO cDep = new DepartmentResponseDTO();
                             cDep.setId(t.getDepartment().getId());
@@ -219,7 +194,7 @@ public class DepartmentController {
                             cTeacher.setDepartment(cDep);
                         }
 
-                        cTeacher.setCourses(List.of());  // Sonsuz döngüyü kır
+                        cTeacher.setCourses(List.of());
                         cDto.setTeacher(cTeacher);
 
                         cDto.setStudents(List.of());
@@ -238,6 +213,5 @@ public class DepartmentController {
 
         return dto;
     }
-
 
 }

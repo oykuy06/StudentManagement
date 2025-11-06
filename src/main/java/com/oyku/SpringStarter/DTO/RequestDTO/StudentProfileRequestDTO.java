@@ -1,7 +1,11 @@
 package com.oyku.SpringStarter.DTO.RequestDTO;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class StudentProfileRequestDTO {
+    @NotBlank(message = "Profile address cannot be blank")
     private String address;
+    @NotBlank(message = "Profile phone cannot be blank")
     private String phone;
 
     public String getAddress() {

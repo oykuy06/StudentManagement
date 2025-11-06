@@ -2,6 +2,7 @@ package com.oyku.SpringStarter.service;
 
 import com.oyku.SpringStarter.model.Library;
 import com.oyku.SpringStarter.repository.LibraryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,21 +21,30 @@ public class LibraryService {
         return libraryRepository.findAll();
     }
 
-    public Optional<Library> getLibraryById(int id) {
-        return libraryRepository.findById(id);
+    public Library getLibraryById(int id) {
+        return libraryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Library not found with ID: " + id));
     }
 
     public Library addNewLibrary(Library library) {
         return libraryRepository.save(library);
     }
 
-    public Library updateLibrary(Library library){
+    public Library updateLibrary(int id, Library updatedData){
+        Library library = libraryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Library not found with ID: " + id));
+
+        library.setName(updatedData.getName());
+        library.setLocation(updatedData.getLocation());
+
         return libraryRepository.save(library);
     }
 
-    public boolean deleteLibrary(int id) {
-        if(!libraryRepository.existsById(id)) return false;
+    public void deleteLibrary(int id) {
+        if (!libraryRepository.existsById(id)) {
+            throw new EntityNotFoundException("Library not found with ID: " + id);
+        }
         libraryRepository.deleteById(id);
-        return true;
     }
+
 }
