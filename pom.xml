@@ -90,6 +90,11 @@
             <artifactId>hibernate-validator</artifactId>
             <version>8.0.3.Final</version>
         </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.17.0</version>
+        </dependency>
 
     </dependencies>
 

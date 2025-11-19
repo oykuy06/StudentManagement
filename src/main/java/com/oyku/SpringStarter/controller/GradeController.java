@@ -2,6 +2,8 @@ package com.oyku.SpringStarter.controller;
 
 import com.oyku.SpringStarter.DTO.RequestDTO.GradeRequestDTO;
 import com.oyku.SpringStarter.DTO.ResponseDTO.*;
+import com.oyku.SpringStarter.DTO.SummaryDTO.CourseSummaryDTO;
+import com.oyku.SpringStarter.DTO.SummaryDTO.StudentSummaryDTO;
 import com.oyku.SpringStarter.model.Grade;
 import com.oyku.SpringStarter.response.ApiResponse;
 import com.oyku.SpringStarter.service.GradeService;
@@ -56,68 +58,23 @@ public class GradeController {
         dto.setId(grade.getId());
         dto.setScore(grade.getScore());
 
-        // Student
+        // Student summary
         if (grade.getStudent() != null) {
-            StudentResponseDTO sDto = new StudentResponseDTO();
+            StudentSummaryDTO sDto = new StudentSummaryDTO();
             sDto.setId(grade.getStudent().getId());
             sDto.setName(grade.getStudent().getName() != null ? grade.getStudent().getName() : "");
-
-            if (grade.getStudent().getDepartment() != null) {
-                DepartmentResponseDTO dDto = new DepartmentResponseDTO();
-                dDto.setId(grade.getStudent().getDepartment().getId());
-                dDto.setName(grade.getStudent().getDepartment().getName() != null ? grade.getStudent().getDepartment().getName() : "");
-                dDto.setStudents(List.of());
-                dDto.setTeachers(List.of());
-                sDto.setDepartment(dDto);
-            }
-
-            if (grade.getStudent().getProfile() != null) {
-                StudentProfileResponseDTO pDto = new StudentProfileResponseDTO();
-                pDto.setId(grade.getStudent().getProfile().getId());
-                pDto.setAddress(grade.getStudent().getProfile().getAddress() != null ? grade.getStudent().getProfile().getAddress() : "");
-                pDto.setPhone(grade.getStudent().getProfile().getPhone() != null ? grade.getStudent().getProfile().getPhone() : "");
-                sDto.setProfile(pDto);
-            }
-
-            sDto.setBooks(List.of());
-            sDto.setCourses(List.of());
             dto.setStudent(sDto);
-        } else {
-            dto.setStudent(null);
         }
 
-        // Course
+        // Course summary
         if (grade.getCourse() != null) {
-            CourseResponseDTO cDto = new CourseResponseDTO();
+            CourseSummaryDTO cDto = new CourseSummaryDTO();
             cDto.setId(grade.getCourse().getId());
             cDto.setName(grade.getCourse().getName() != null ? grade.getCourse().getName() : "");
-
-            if (grade.getCourse().getTeacher() != null) {
-                TeacherResponseDTO tDto = new TeacherResponseDTO();
-                tDto.setId(grade.getCourse().getTeacher().getId());
-                tDto.setName(grade.getCourse().getTeacher().getName() != null ? grade.getCourse().getTeacher().getName() : "");
-                tDto.setTitle(grade.getCourse().getTeacher().getTitle() != null ? grade.getCourse().getTeacher().getTitle() : "");
-
-                if (grade.getCourse().getTeacher().getDepartment() != null) {
-                    DepartmentResponseDTO tdDto = new DepartmentResponseDTO();
-                    tdDto.setId(grade.getCourse().getTeacher().getDepartment().getId());
-                    tdDto.setName(grade.getCourse().getTeacher().getDepartment().getName() != null ? grade.getCourse().getTeacher().getDepartment().getName() : "");
-                    tdDto.setStudents(List.of());
-                    tdDto.setTeachers(List.of());
-                    tDto.setDepartment(tdDto);
-                }
-
-                tDto.setCourses(List.of());
-                cDto.setTeacher(tDto);
-            }
-
-            cDto.setStudents(List.of());
-            cDto.setGrades(List.of());
             dto.setCourse(cDto);
-        } else {
-            dto.setCourse(null);
         }
 
         return dto;
     }
+
 }

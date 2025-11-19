@@ -1,10 +1,13 @@
 package com.oyku.SpringStarter.DTO.ResponseDTO;
 
+import com.oyku.SpringStarter.DTO.SummaryDTO.LibrarySummaryDTO;
+import com.oyku.SpringStarter.DTO.SummaryDTO.StudentSummaryDTO;
+
 public class BookResponseDTO {
     private int id;
     private String title;
-    private StudentResponseDTO student;
-    private LibraryResponseDTO library;
+    private StudentSummaryDTO student;
+    private LibrarySummaryDTO library;
 
     public int getId() {
         return id;
@@ -22,19 +25,19 @@ public class BookResponseDTO {
         this.title = title;
     }
 
-    public StudentResponseDTO getStudent() {
+    public StudentSummaryDTO getStudent() {
         return student;
     }
 
-    public void setStudent(StudentResponseDTO student) {
+    public void setStudent(StudentSummaryDTO student) {
         this.student = student;
     }
 
-    public LibraryResponseDTO getLibrary() {
+    public LibrarySummaryDTO getLibrary() {
         return library;
     }
 
-    public void setLibrary(LibraryResponseDTO library) {
+    public void setLibrary(LibrarySummaryDTO library) {
         this.library = library;
     }
 }

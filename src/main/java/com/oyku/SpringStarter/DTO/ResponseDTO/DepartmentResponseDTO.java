@@ -1,12 +1,15 @@
 package com.oyku.SpringStarter.DTO.ResponseDTO;
 
+import com.oyku.SpringStarter.DTO.SummaryDTO.StudentSummaryDTO;
+import com.oyku.SpringStarter.DTO.SummaryDTO.TeacherSummaryDTO;
+
 import java.util.List;
 
 public class DepartmentResponseDTO {
     private int id;
     private String name;
-    private List<StudentResponseDTO> students;
-    private List<TeacherResponseDTO> teachers;
+    private List<StudentSummaryDTO> students;
+    private List<TeacherSummaryDTO> teachers;
 
     public int getId() {
         return id;
@@ -24,19 +27,19 @@ public class DepartmentResponseDTO {
         this.name = name;
     }
 
-    public List<StudentResponseDTO> getStudents() {
+    public List<StudentSummaryDTO> getStudents() {
         return students;
     }
 
-    public void setStudents(List<StudentResponseDTO> students) {
+    public void setStudents(List<StudentSummaryDTO> students) {
         this.students = students;
     }
 
-    public List<TeacherResponseDTO> getTeachers() {
+    public List<TeacherSummaryDTO> getTeachers() {
         return teachers;
     }
 
-    public void setTeachers(List<TeacherResponseDTO> teachers) {
+    public void setTeachers(List<TeacherSummaryDTO> teachers) {
         this.teachers = teachers;
     }
 }

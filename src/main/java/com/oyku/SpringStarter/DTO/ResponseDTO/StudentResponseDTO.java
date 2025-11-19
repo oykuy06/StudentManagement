@@ -1,14 +1,18 @@
 package com.oyku.SpringStarter.DTO.ResponseDTO;
 
+import com.oyku.SpringStarter.DTO.SummaryDTO.BookSummaryDTO;
+import com.oyku.SpringStarter.DTO.SummaryDTO.CourseSummaryDTO;
+import com.oyku.SpringStarter.DTO.SummaryDTO.DepartmentSummaryDTO;
+
 import java.util.List;
 
 public class StudentResponseDTO {
     private int id;
     private String name;
-    private DepartmentResponseDTO department;
+    private DepartmentSummaryDTO department;
     private StudentProfileResponseDTO profile;
-    private List<BookResponseDTO> books;
-    private List<CourseResponseDTO> courses;
+    private List<BookSummaryDTO> books;
+    private List<CourseSummaryDTO> courses;
 
     public int getId() {
         return id;
@@ -26,11 +30,11 @@ public class StudentResponseDTO {
         this.name = name;
     }
 
-    public DepartmentResponseDTO getDepartment() {
+    public DepartmentSummaryDTO getDepartment() {
         return department;
     }
 
-    public void setDepartment(DepartmentResponseDTO department) {
+    public void setDepartment(DepartmentSummaryDTO department) {
         this.department = department;
     }
 
@@ -42,19 +46,19 @@ public class StudentResponseDTO {
         this.profile = profile;
     }
 
-    public List<BookResponseDTO> getBooks() {
+    public List<BookSummaryDTO> getBooks() {
         return books;
     }
 
-    public void setBooks(List<BookResponseDTO> books) {
+    public void setBooks(List<BookSummaryDTO> books) {
         this.books = books;
     }
 
-    public List<CourseResponseDTO> getCourses() {
+    public List<CourseSummaryDTO> getCourses() {
         return courses;
     }
 
-    public void setCourses(List<CourseResponseDTO> courses) {
+    public void setCourses(List<CourseSummaryDTO> courses) {
         this.courses = courses;
     }
 }

@@ -1,13 +1,17 @@
 package com.oyku.SpringStarter.DTO.ResponseDTO;
 
+import com.oyku.SpringStarter.DTO.SummaryDTO.GradeSummaryDTO;
+import com.oyku.SpringStarter.DTO.SummaryDTO.StudentSummaryDTO;
+import com.oyku.SpringStarter.DTO.SummaryDTO.TeacherSummaryDTO;
+
 import java.util.List;
 
 public class CourseResponseDTO {
     private int id;
     private String name;
-    private TeacherResponseDTO teacher;
-    private List<StudentResponseDTO> students;
-    private List<GradeResponseDTO> grades;
+    private TeacherSummaryDTO teacher;
+    private List<StudentSummaryDTO> students;
+    private List<GradeSummaryDTO> grades;
 
     public int getId() {
         return id;
@@ -25,27 +29,27 @@ public class CourseResponseDTO {
         this.name = name;
     }
 
-    public TeacherResponseDTO getTeacher() {
+    public TeacherSummaryDTO getTeacher() {
         return teacher;
     }
 
-    public void setTeacher(TeacherResponseDTO teacher) {
+    public void setTeacher(TeacherSummaryDTO teacher) {
         this.teacher = teacher;
     }
 
-    public List<StudentResponseDTO> getStudents() {
+    public List<StudentSummaryDTO> getStudents() {
         return students;
     }
 
-    public void setStudents(List<StudentResponseDTO> students) {
+    public void setStudents(List<StudentSummaryDTO> students) {
         this.students = students;
     }
 
-    public List<GradeResponseDTO> getGrades() {
+    public List<GradeSummaryDTO> getGrades() {
         return grades;
     }
 
-    public void setGrades(List<GradeResponseDTO> grades) {
+    public void setGrades(List<GradeSummaryDTO> grades) {
         this.grades = grades;
     }
 }

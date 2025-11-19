@@ -2,6 +2,7 @@ package com.oyku.SpringStarter.controller;
 
 import com.oyku.SpringStarter.DTO.RequestDTO.LibraryRequestDTO;
 import com.oyku.SpringStarter.DTO.ResponseDTO.*;
+import com.oyku.SpringStarter.DTO.SummaryDTO.BookSummaryDTO;
 import com.oyku.SpringStarter.model.Library;
 import com.oyku.SpringStarter.response.ApiResponse;
 import com.oyku.SpringStarter.service.LibraryService;
@@ -68,52 +69,19 @@ public class LibraryController {
         dto.setName(library.getName() != null ? library.getName() : "");
         dto.setLocation(library.getLocation() != null ? library.getLocation() : "");
 
-        dto.setBooks(library.getBooks() != null ? library.getBooks().stream().map(book -> {
-            BookResponseDTO bDto = new BookResponseDTO();
-            bDto.setId(book.getId());
-            bDto.setTitle(book.getTitle() != null ? book.getTitle() : "");
-
-            // Student reference
-            if (book.getStudent() != null) {
-                StudentResponseDTO sDto = new StudentResponseDTO();
-                sDto.setId(book.getStudent().getId());
-                sDto.setName(book.getStudent().getName() != null ? book.getStudent().getName() : "");
-
-                if (book.getStudent().getDepartment() != null) {
-                    DepartmentResponseDTO dDto = new DepartmentResponseDTO();
-                    dDto.setId(book.getStudent().getDepartment().getId());
-                    dDto.setName(book.getStudent().getDepartment().getName() != null ? book.getStudent().getDepartment().getName() : "");
-                    dDto.setStudents(List.of());
-                    dDto.setTeachers(List.of());
-                    sDto.setDepartment(dDto);
-                }
-
-                if (book.getStudent().getProfile() != null) {
-                    StudentProfileResponseDTO pDto = new StudentProfileResponseDTO();
-                    pDto.setId(book.getStudent().getProfile().getId());
-                    pDto.setAddress(book.getStudent().getProfile().getAddress() != null ? book.getStudent().getProfile().getAddress() : "");
-                    pDto.setPhone(book.getStudent().getProfile().getPhone() != null ? book.getStudent().getProfile().getPhone() : "");
-                    sDto.setProfile(pDto);
-                }
-
-                sDto.setBooks(List.of());
-                sDto.setCourses(List.of());
-                bDto.setStudent(sDto);
-            } else {
-                bDto.setStudent(null);
-            }
-
-            // Library reference
-            LibraryResponseDTO libDto = new LibraryResponseDTO();
-            libDto.setId(library.getId());
-            libDto.setName(library.getName() != null ? library.getName() : "");
-            libDto.setLocation(library.getLocation() != null ? library.getLocation() : "");
-            libDto.setBooks(List.of());
-            bDto.setLibrary(libDto);
-
-            return bDto;
-        }).collect(Collectors.toList()) : List.of());
+        // Books summary
+        if (library.getBooks() != null) {
+            dto.setBooks(library.getBooks().stream().map(b -> {
+                BookSummaryDTO bDto = new BookSummaryDTO();
+                bDto.setId(b.getId());
+                bDto.setTitle(b.getTitle() != null ? b.getTitle() : "");
+                return bDto;
+            }).toList());
+        } else {
+            dto.setBooks(List.of());
+        }
 
         return dto;
     }
+
 }

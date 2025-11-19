@@ -2,6 +2,9 @@ package com.oyku.SpringStarter.controller;
 
 import com.oyku.SpringStarter.DTO.RequestDTO.StudentRequestDTO;
 import com.oyku.SpringStarter.DTO.ResponseDTO.*;
+import com.oyku.SpringStarter.DTO.SummaryDTO.BookSummaryDTO;
+import com.oyku.SpringStarter.DTO.SummaryDTO.CourseSummaryDTO;
+import com.oyku.SpringStarter.DTO.SummaryDTO.DepartmentSummaryDTO;
 import com.oyku.SpringStarter.model.Student;
 import com.oyku.SpringStarter.response.ApiResponse;
 import com.oyku.SpringStarter.service.StudentService;
@@ -60,91 +63,48 @@ public class StudentController {
         dto.setId(student.getId());
         dto.setName(student.getName() != null ? student.getName() : "");
 
-        // Department
+        // Department summary
         if (student.getDepartment() != null) {
-            DepartmentResponseDTO d = new DepartmentResponseDTO();
-            d.setId(student.getDepartment().getId());
-            d.setName(student.getDepartment().getName() != null ? student.getDepartment().getName() : "");
-            d.setStudents(new ArrayList<>());
-            d.setTeachers(new ArrayList<>());
-            dto.setDepartment(d);
+            DepartmentSummaryDTO dDto = new DepartmentSummaryDTO();
+            dDto.setId(student.getDepartment().getId());
+            dDto.setName(student.getDepartment().getName() != null ? student.getDepartment().getName() : "");
+            dto.setDepartment(dDto);
         }
 
         // Profile
         if (student.getProfile() != null) {
-            StudentProfileResponseDTO p = new StudentProfileResponseDTO();
-            p.setId(student.getProfile().getId());
-            p.setAddress(student.getProfile().getAddress() != null ? student.getProfile().getAddress() : "");
-            p.setPhone(student.getProfile().getPhone() != null ? student.getProfile().getPhone() : "");
-            dto.setProfile(p);
+            StudentProfileResponseDTO pDto = new StudentProfileResponseDTO();
+            pDto.setId(student.getProfile().getId());
+            pDto.setAddress(student.getProfile().getAddress() != null ? student.getProfile().getAddress() : "");
+            pDto.setPhone(student.getProfile().getPhone() != null ? student.getProfile().getPhone() : "");
+            dto.setProfile(pDto);
         }
 
-        // Books
-        dto.setBooks(student.getBooks() != null ? student.getBooks().stream().map(b -> {
-            BookResponseDTO br = new BookResponseDTO();
-            br.setId(b.getId());
-            br.setTitle(b.getTitle() != null ? b.getTitle() : "");
+        // Books summary
+        if (student.getBooks() != null) {
+            dto.setBooks(student.getBooks().stream().map(b -> {
+                BookSummaryDTO bDto = new BookSummaryDTO();
+                bDto.setId(b.getId());
+                bDto.setTitle(b.getTitle() != null ? b.getTitle() : "");
+                return bDto;
+            }).toList());
+        } else {
+            dto.setBooks(List.of());
+        }
 
-            StudentResponseDTO bStudent = new StudentResponseDTO();
-            bStudent.setId(student.getId());
-            bStudent.setName(student.getName() != null ? student.getName() : "");
-            if (student.getDepartment() != null) {
-                DepartmentResponseDTO bDep = new DepartmentResponseDTO();
-                bDep.setId(student.getDepartment().getId());
-                bDep.setName(student.getDepartment().getName() != null ? student.getDepartment().getName() : "");
-                bDep.setStudents(new ArrayList<>());
-                bDep.setTeachers(new ArrayList<>());
-                bStudent.setDepartment(bDep);
-            }
-            if (student.getProfile() != null) {
-                StudentProfileResponseDTO bProfile = new StudentProfileResponseDTO();
-                bProfile.setId(student.getProfile().getId());
-                bProfile.setAddress(student.getProfile().getAddress() != null ? student.getProfile().getAddress() : "");
-                bProfile.setPhone(student.getProfile().getPhone() != null ? student.getProfile().getPhone() : "");
-                bStudent.setProfile(bProfile);
-            }
-            bStudent.setBooks(new ArrayList<>());
-            bStudent.setCourses(new ArrayList<>());
-            br.setStudent(bStudent);
-
-            if (b.getLibrary() != null) {
-                LibraryResponseDTO lib = new LibraryResponseDTO();
-                lib.setId(b.getLibrary().getId());
-                lib.setName(b.getLibrary().getName() != null ? b.getLibrary().getName() : "");
-                lib.setLocation(b.getLibrary().getLocation() != null ? b.getLibrary().getLocation() : "");
-                lib.setBooks(new ArrayList<>());
-                br.setLibrary(lib);
-            }
-            return br;
-        }).collect(Collectors.toList()) : new ArrayList<>());
-
-        // Courses
-        dto.setCourses(student.getCourses() != null ? student.getCourses().stream().map(c -> {
-            CourseResponseDTO cr = new CourseResponseDTO();
-            cr.setId(c.getId());
-            cr.setName(c.getName() != null ? c.getName() : "");
-
-            if (c.getTeacher() != null) {
-                TeacherResponseDTO tr = new TeacherResponseDTO();
-                tr.setId(c.getTeacher().getId());
-                tr.setName(c.getTeacher().getName() != null ? c.getTeacher().getName() : "");
-                tr.setTitle(c.getTeacher().getTitle() != null ? c.getTeacher().getTitle() : "");
-                if (c.getTeacher().getDepartment() != null) {
-                    DepartmentResponseDTO td = new DepartmentResponseDTO();
-                    td.setId(c.getTeacher().getDepartment().getId());
-                    td.setName(c.getTeacher().getDepartment().getName() != null ? c.getTeacher().getDepartment().getName() : "");
-                    td.setStudents(new ArrayList<>());
-                    td.setTeachers(new ArrayList<>());
-                    tr.setDepartment(td);
-                }
-                tr.setCourses(new ArrayList<>());
-                cr.setTeacher(tr);
-            }
-            cr.setStudents(new ArrayList<>());
-            cr.setGrades(new ArrayList<>());
-            return cr;
-        }).collect(Collectors.toList()) : new ArrayList<>());
+        // Courses summary
+        if (student.getCourses() != null) {
+            dto.setCourses(student.getCourses().stream().map(c -> {
+                CourseSummaryDTO cDto = new CourseSummaryDTO();
+                cDto.setId(c.getId());
+                cDto.setName(c.getName() != null ? c.getName() : "");
+                return cDto;
+            }).toList());
+        } else {
+            dto.setCourses(List.of());
+        }
 
         return dto;
     }
+
 }

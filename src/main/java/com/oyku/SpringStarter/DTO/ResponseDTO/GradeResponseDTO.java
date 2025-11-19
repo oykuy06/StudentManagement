@@ -1,10 +1,13 @@
 package com.oyku.SpringStarter.DTO.ResponseDTO;
 
+import com.oyku.SpringStarter.DTO.SummaryDTO.CourseSummaryDTO;
+import com.oyku.SpringStarter.DTO.SummaryDTO.StudentSummaryDTO;
+
 public class GradeResponseDTO {
     private int id;
     private double score;
-    private StudentResponseDTO student;
-    private CourseResponseDTO course;
+    private StudentSummaryDTO student;
+    private CourseSummaryDTO course;
 
     public int getId() {
         return id;
@@ -22,19 +25,19 @@ public class GradeResponseDTO {
         this.score = score;
     }
 
-    public StudentResponseDTO getStudent() {
+    public StudentSummaryDTO getStudent() {
         return student;
     }
 
-    public void setStudent(StudentResponseDTO student) {
+    public void setStudent(StudentSummaryDTO student) {
         this.student = student;
     }
 
-    public CourseResponseDTO getCourse() {
+    public CourseSummaryDTO getCourse() {
         return course;
     }
 
-    public void setCourse(CourseResponseDTO course) {
+    public void setCourse(CourseSummaryDTO course) {
         this.course = course;
     }
 }

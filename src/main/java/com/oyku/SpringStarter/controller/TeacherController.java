@@ -2,6 +2,8 @@ package com.oyku.SpringStarter.controller;
 
 import com.oyku.SpringStarter.DTO.RequestDTO.TeacherRequestDTO;
 import com.oyku.SpringStarter.DTO.ResponseDTO.*;
+import com.oyku.SpringStarter.DTO.SummaryDTO.CourseSummaryDTO;
+import com.oyku.SpringStarter.DTO.SummaryDTO.DepartmentSummaryDTO;
 import com.oyku.SpringStarter.model.Teacher;
 import com.oyku.SpringStarter.response.ApiResponse;
 import com.oyku.SpringStarter.service.TeacherService;
@@ -60,46 +62,27 @@ public class TeacherController {
         dto.setName(teacher.getName() != null ? teacher.getName() : "");
         dto.setTitle(teacher.getTitle() != null ? teacher.getTitle() : "");
 
-        // Department
+        // Department summary
         if (teacher.getDepartment() != null) {
-            DepartmentResponseDTO depDto = new DepartmentResponseDTO();
+            DepartmentSummaryDTO depDto = new DepartmentSummaryDTO();
             depDto.setId(teacher.getDepartment().getId());
             depDto.setName(teacher.getDepartment().getName() != null ? teacher.getDepartment().getName() : "");
-            depDto.setStudents(List.of());
-            depDto.setTeachers(List.of());
             dto.setDepartment(depDto);
         }
 
-        // Courses
+        // Courses summary
         if (teacher.getCourses() != null) {
             dto.setCourses(teacher.getCourses().stream().map(c -> {
-                CourseResponseDTO cDto = new CourseResponseDTO();
+                CourseSummaryDTO cDto = new CourseSummaryDTO();
                 cDto.setId(c.getId());
                 cDto.setName(c.getName() != null ? c.getName() : "");
-
-                TeacherResponseDTO tDto = new TeacherResponseDTO();
-                tDto.setId(teacher.getId());
-                tDto.setName(teacher.getName() != null ? teacher.getName() : "");
-                tDto.setTitle(teacher.getTitle() != null ? teacher.getTitle() : "");
-                if (teacher.getDepartment() != null) {
-                    DepartmentResponseDTO tDep = new DepartmentResponseDTO();
-                    tDep.setId(teacher.getDepartment().getId());
-                    tDep.setName(teacher.getDepartment().getName() != null ? teacher.getDepartment().getName() : "");
-                    tDep.setStudents(List.of());
-                    tDep.setTeachers(List.of());
-                    tDto.setDepartment(tDep);
-                }
-                tDto.setCourses(List.of());
-                cDto.setTeacher(tDto);
-
-                cDto.setStudents(List.of());
-                cDto.setGrades(List.of());
                 return cDto;
-            }).collect(Collectors.toList()));
+            }).toList());
         } else {
             dto.setCourses(List.of());
         }
 
         return dto;
     }
+
 }

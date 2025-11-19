@@ -12,7 +12,7 @@ public class StudentProfile {
     private String address;
     private String phone;
 
-    @OneToOne(mappedBy = "profile")
+    @OneToOne(mappedBy = "profile",  fetch = FetchType.LAZY)
     private Student student;
 
     public StudentProfile() {}

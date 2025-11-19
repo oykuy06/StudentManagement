@@ -12,12 +12,12 @@ public class Book {
 
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "student_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    @ManyToOne
-    @JoinColumn(name = "library_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "library_id", nullable = false)
     private Library library;
 
 
