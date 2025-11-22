@@ -9,9 +9,7 @@ import com.oyku.SpringStarter.DTO.RequestDTO.StudentRequestDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import com.oyku.SpringStarter.model.Book;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -128,11 +126,16 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public void deleteStudent(int id) {
-        if (!studentRepository.existsById(id)) {
-            throw new EntityNotFoundException("Student not found with ID: " + id);
+    public void deleteStudent(int studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        for (Book book : student.getBooks()) {
+            book.setStudent(null);
         }
-        studentRepository.deleteById(id);
+        bookRepository.saveAll(student.getBooks());
+
+        studentRepository.delete(student);
     }
 
 }

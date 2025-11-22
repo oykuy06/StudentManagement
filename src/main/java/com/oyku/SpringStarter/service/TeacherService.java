@@ -9,10 +9,8 @@ import com.oyku.SpringStarter.repository.DepartmentRepository;
 import com.oyku.SpringStarter.repository.TeacherRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TeacherService {
@@ -69,13 +67,25 @@ public class TeacherService {
                 .orElseThrow(() -> new EntityNotFoundException("Department not found with ID: " + dto.getDepartmentId()));
         teacher.setDepartment(department);
 
+        // Courses null-safe
+        List<Course> newCourses = new ArrayList<>();
         if (dto.getCourseIds() != null) {
-            List<Course> courses = dto.getCourseIds().stream()
+            newCourses = dto.getCourseIds().stream()
                     .map(courseId -> courseRepository.findById(courseId)
                             .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId)))
                     .toList();
-            teacher.setCourses(courses);
         }
+
+        if (teacher.getCourses() != null) {
+            teacher.getCourses().forEach(c -> c.setTeacher(null));
+            teacher.getCourses().clear();
+        } else {
+            teacher.setCourses(new ArrayList<>());
+        }
+
+        // new courses and teachers
+        newCourses.forEach(c -> c.setTeacher(teacher));
+        teacher.getCourses().addAll(newCourses);
 
         return teacherRepository.save(teacher);
     }

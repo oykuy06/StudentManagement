@@ -11,9 +11,8 @@ public class CourseRequestDTO {
     @NotNull(message = "Teacher ID is required")
     @Positive(message = "Teacher ID must be positive")
     private Integer teacherId;
-    @NotNull(message = "Student ID is required")
-    @Positive(message = "Student ID must be positive")
-    private List<Integer> studentIds;
+    @NotNull(message = "Student IDs are required")
+    private List<@Positive(message = "Student ID must be positive") Integer> studentIds;
 
     public String getName() {
         return name;

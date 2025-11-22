@@ -2,31 +2,33 @@ package com.oyku.SpringStarter.controller;
 
 import com.oyku.SpringStarter.DTO.RequestDTO.TeacherRequestDTO;
 import com.oyku.SpringStarter.DTO.ResponseDTO.*;
-import com.oyku.SpringStarter.DTO.SummaryDTO.CourseSummaryDTO;
-import com.oyku.SpringStarter.DTO.SummaryDTO.DepartmentSummaryDTO;
+import com.oyku.SpringStarter.mapper.TeacherMapper;
 import com.oyku.SpringStarter.model.Teacher;
 import com.oyku.SpringStarter.response.ApiResponse;
 import com.oyku.SpringStarter.service.TeacherService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/teachers")
+@RequestMapping("/api/v1/teachers")
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final TeacherMapper teacherMapper;
 
-    public TeacherController(TeacherService teacherService){
+    public TeacherController(TeacherService teacherService, TeacherMapper teacherMapper){
         this.teacherService = teacherService;
+        this.teacherMapper = teacherMapper;
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> getAllTeachers() {
         List<TeacherResponseDTO> teachers = teacherService.getAllTeachers().stream()
-                .map(this::convertToResponseDTO)
+                .map(teacherMapper::toDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(new ApiResponse<>(true, "Teachers fetched successfully", teachers));
     }
@@ -34,55 +36,29 @@ public class TeacherController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<TeacherResponseDTO>> getTeacherById(@PathVariable int id) {
         Teacher teacher = teacherService.getTeacherById(id);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Teacher fetched successfully", convertToResponseDTO(teacher)));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Teacher fetched successfully", teacherMapper.toDTO(teacher)));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<TeacherResponseDTO>> addTeacher(@Valid @RequestBody TeacherRequestDTO dto) {
         Teacher teacher = teacherService.addNewTeacher(dto);
-        return ResponseEntity.status(201).body(new ApiResponse<>(true, "Teacher created successfully", convertToResponseDTO(teacher)));
+        TeacherResponseDTO responseDTO = teacherMapper.toDTO(teacher);
+
+        URI location = URI.create("/api/v1/teachers/" + teacher.getId());
+        return ResponseEntity.created(location)
+                .body(new ApiResponse<>(true, "Teacher created successfully", responseDTO));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<TeacherResponseDTO>> updateTeacher(@PathVariable int id,
                                                                          @Valid @RequestBody TeacherRequestDTO dto) {
         Teacher updated = teacherService.updateTeacher(id, dto);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Teacher updated successfully", convertToResponseDTO(updated)));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Teacher updated successfully", teacherMapper.toDTO(updated)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteTeacher(@PathVariable int id) {
+    public ResponseEntity<Void> deleteTeacher(@PathVariable int id) {
         teacherService.deleteTeacherById(id);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Teacher deleted successfully", null));
+        return ResponseEntity.noContent().build(); // 204
     }
-
-    private TeacherResponseDTO convertToResponseDTO(Teacher teacher) {
-        TeacherResponseDTO dto = new TeacherResponseDTO();
-        dto.setId(teacher.getId());
-        dto.setName(teacher.getName() != null ? teacher.getName() : "");
-        dto.setTitle(teacher.getTitle() != null ? teacher.getTitle() : "");
-
-        // Department summary
-        if (teacher.getDepartment() != null) {
-            DepartmentSummaryDTO depDto = new DepartmentSummaryDTO();
-            depDto.setId(teacher.getDepartment().getId());
-            depDto.setName(teacher.getDepartment().getName() != null ? teacher.getDepartment().getName() : "");
-            dto.setDepartment(depDto);
-        }
-
-        // Courses summary
-        if (teacher.getCourses() != null) {
-            dto.setCourses(teacher.getCourses().stream().map(c -> {
-                CourseSummaryDTO cDto = new CourseSummaryDTO();
-                cDto.setId(c.getId());
-                cDto.setName(c.getName() != null ? c.getName() : "");
-                return cDto;
-            }).toList());
-        } else {
-            dto.setCourses(List.of());
-        }
-
-        return dto;
-    }
-
 }
