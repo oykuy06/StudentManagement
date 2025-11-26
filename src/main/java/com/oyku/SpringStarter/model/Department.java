@@ -1,5 +1,6 @@
 package com.oyku.SpringStarter.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -14,9 +15,11 @@ public class Department {
     private String name;
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Student> students = new ArrayList<>();
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Teacher> teachers = new ArrayList<>();
 
     public Department(){

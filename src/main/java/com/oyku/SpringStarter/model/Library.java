@@ -1,5 +1,6 @@
 package com.oyku.SpringStarter.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class Library {
     private String location;
 
     @OneToMany(mappedBy = "library", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Book> books = new ArrayList<>();
 
     public Library(){

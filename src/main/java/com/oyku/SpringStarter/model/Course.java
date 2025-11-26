@@ -1,6 +1,8 @@
 package com.oyku.SpringStarter.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ public class Course {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", nullable = false)
+    @JsonBackReference
     private Teacher teacher;
 
     @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)
@@ -22,6 +25,7 @@ public class Course {
     private List<Student> students = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Grade> grades = new ArrayList<>();
 
     public Course() {}

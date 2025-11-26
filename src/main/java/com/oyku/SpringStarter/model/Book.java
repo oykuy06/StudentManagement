@@ -1,5 +1,6 @@
 package com.oyku.SpringStarter.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,10 +14,12 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "student_id", nullable = true)
+    @JsonBackReference
     private Student student;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "library_id", nullable = false)
+    @JsonBackReference
     private Library library;
 
 
