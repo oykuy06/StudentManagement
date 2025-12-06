@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface GradeRepository extends JpaRepository<Grade, Integer> {
     List<Grade> findByStudentId(int studentId);
-    List<Grade> findByCourseId(int coyrseId);
+    List<Grade> findByCourseId(int courseId);
 }

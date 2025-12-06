@@ -18,7 +18,7 @@ public class Department {
     @JsonManagedReference
     private List<Student> students = new ArrayList<>();
 
-    @OneToMany(mappedBy = "department", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Teacher> teachers = new ArrayList<>();
 

@@ -36,7 +36,7 @@ public class GradeService {
                 .orElseThrow(() -> new EntityNotFoundException("Grade not found with ID: " + id));
     }
 
-    public Grade createGrade(double score, int studentId, int courseId) {
+    public Grade createGrade(Double score, int studentId, int courseId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
         Course course = courseRepository.findById(courseId)
@@ -50,7 +50,7 @@ public class GradeService {
         return gradeRepository.save(grade);
     }
 
-    public Grade updateGrade(int id, double score, int studentId, int courseId) {
+    public Grade updateGrade(int id, Double score, int studentId, int courseId) {
         Grade grade = gradeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Grade not found with ID: " + id));
 

@@ -5,7 +5,7 @@ import com.oyku.SpringStarter.DTO.SummaryDTO.StudentSummaryDTO;
 
 public class GradeResponseDTO {
     private int id;
-    private double score;
+    private Double score;
     private StudentSummaryDTO student;
     private CourseSummaryDTO course;
 
@@ -17,11 +17,11 @@ public class GradeResponseDTO {
         this.id = id;
     }
 
-    public double getScore() {
+    public Double getScore() {
         return score;
     }
 
-    public void setScore(double score) {
+    public void setScore(Double score) {
         this.score = score;
     }
 

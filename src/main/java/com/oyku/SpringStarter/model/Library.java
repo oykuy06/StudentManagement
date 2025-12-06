@@ -15,7 +15,7 @@ public class Library {
     private String name;
     private String location;
 
-    @OneToMany(mappedBy = "library", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "library", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Book> books = new ArrayList<>();
 

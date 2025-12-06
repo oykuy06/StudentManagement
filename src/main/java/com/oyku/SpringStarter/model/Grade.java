@@ -10,7 +10,7 @@ public class Grade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private double score;
+    private Double score;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
@@ -26,7 +26,7 @@ public class Grade {
 
     }
 
-    public Grade(double score){
+    public Grade(Double score){
         this.score = score;
     }
 
@@ -38,11 +38,11 @@ public class Grade {
         this.id = id;
     }
 
-    public double getScore() {
+    public Double getScore() {
         return score;
     }
 
-    public void setScore(double score) {
+    public void setScore(Double score) {
         this.score = score;
     }
 

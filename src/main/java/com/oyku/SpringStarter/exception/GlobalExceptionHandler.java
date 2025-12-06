@@ -29,11 +29,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
-    // Entitiy errors
+    // Entity errors
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponse<String>> handleEntityNotFound(EntityNotFoundException ex) {
         ApiResponse<String> response = new ApiResponse<>(false, ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    //IllegalArgumentException
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<String>>handleIllegalArgument(IllegalArgumentException ex){
+        ApiResponse<String> response = new ApiResponse<>(false, ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     // Another unexpected errors

@@ -12,7 +12,7 @@ public class Book {
 
     private String title;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = true)
     @JsonBackReference
     private Student student;
